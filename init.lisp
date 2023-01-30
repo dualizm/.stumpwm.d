@@ -1,16 +1,74 @@
 ;; author: ezqb
 ;; file: stumpwm config
 
+;; quicklisp
+(let ((quicklisp-init (merge-pathnames "quicklisp/setup.lisp"
+				       (user-homedir-pathname))))
+  (when (probe-file quicklisp-init)
+    (load quicklisp-init)))
+
+;; load stumpwm
 (in-package :stumpwm)
 
 ;; bind prefix key
 (set-prefix-key (kbd "C-t"))
 
-;; color background
-;;(setf (xlib:window-background (screen-root (current-screen))) #x691984)
+;; color theme
+(setf *color-white* "#ffffff"
+      *color-orange* "#e68910"
+      *color-magenta* "#d34474"
+      *color-purple* "#1c1d36"
+      *color-gray* "#161616"
+      *color-black* "#0c0b16")
+
+;; groups
+(when *initializing*
+  (grename "www")
+  (gnewbg  "dev")
+  (gnewbg  "tlg"))
+
+;; color theme
+(set-fg-color *color-orange*)
+(set-bg-color *color-purple*)
+(set-border-color *color-black*)
+(set-msg-border-width 2)
+
+;; mod-line config
+(setf *mode-line-timeout* 1)
+(setf *mode-line-border-width* 0)
+(setf *mode-line-background-color* *color-purple*)
+(setf *mode-line-border-color* *color-black*)
+(setf *mode-line-foreground-color* *color-orange*)
+(mode-line)
+
+;;(setf *time-modeline-string* *time-modeline-string-default*)
+
+(setf *screen-mode-line-format*
+      (list "(%g) "       ; groups
+	    "%W"              ; windows
+	    "^>"              ; right align
+	    ;;"%S"              ; swank status
+	    ;;"%B"              ; battery percentage
+	    "%C" ;cpu
+	    "%M" ;ram
+	    "%B" ;bat
+            "%d"))            ; time/date
+
+
+;; winddows config
+(setf *window-format* "%m%n%s%20t")
+(setf *mouse-focus-policy* :click)
+(setf *message-window-padding* 20)
+(set-msg-border-width 2)
+(setf *timeout-wait 4)
+(setf *message-window-gravite :top-right)
+(setf *input-window-gravity* :top-right)
+
+;; font
+(set-font "Iosevka Nerd Font Mono")
 
 ;; wallpaper
-(run-shell-command "feh --bg-fill /home/ez/pic/city/nightcity-puprle-cool-skamya.jpg")
+(run-shell-command "feh --bg-fill /home/ez/pic/8-bit/pixelart-night-darkfantasy.jpg")
 
 ;; keyboard
 (run-shell-command "setxkbmap -option ctrl:swapcasp")
@@ -19,10 +77,16 @@
 ;; standalone compositor
 (run-shell-command "picom")
 
+;; audio server
+;;(run-shell-command "pipewire")
+
+;; mouse hidde
+;;(run-shell-command "xsetroot -cursor_name left_ptr")
+
 ;; set terminal
-(define-key *root-map* (kbd "Return") "exec kitty")
-(define-key *root-map* (kbd "c") "exec kitty")
-(define-key *root-map* (kbd "C-c") "exec kitty")
+(define-key *root-map* (kbd "Return") "exec alacritty")
+(define-key *root-map* (kbd "c") "exec alacritty")
+(define-key *root-map* (kbd "C-c") "exec alacritty")
 
 ;;(set-font (list
 ;;	   (make-instance 'xft:font
@@ -34,57 +98,37 @@
 ;;			  :subfamily "Regular"
 ;;			  :size 12)))
 
-;; color theme
-(set-fg-color "#d34474")
-(set-bg-color "#161616")
-(set-border-color "#000000")
-(set-msg-border-width 2)
+;; slynk server
+;;(defcommand slynk (port) ((:string "Port number: "))
+;;  (sb-thread:make-thread
+;;   (lambda ()
+;;     (slynk:create-server :port (parse-integer port) :dont-close t))
+;;   :name "slynk-manual"))
 
-;; font
-(set-font "Monoid")
+;;(defparameter *slynk-port-number* 4004)
+;;(defvar *slynk-status-p* nil)
+;;
+;;(defcommand start-slynk () ()
+;;  (if *slynk-status-p*
+;;      (message "slynk server is already active on port ~a~%" *slynk-port-number*)
+;;      (progn
+;;	(slynk:create-server :port *slynk-port-number*
+;;			     :style slynk:*communication-style*
+;;			     :dont-close t)
+;;	(setf *slynk-status-p* t)
+;;	(message "slynk server run~%port: ~a~%" *port-number*))))
+;;
+;;(defcommand stop-slynk () ()
+;;  (slynk:stop-server *slynk-port-number*)
+;;  (setf *slynk-status-p* nil)
+;;  (message "stopping slynk!~%closing port: ~a~%" *slynk-port-number*))
 
-;; config
-(setf *message-window-padding* 20
-      *message-window-gravity* :center
-      *input-window-gravity* :center
-      *timeout-wait* 7)
-      
+;; application
+(defcommand firefox () ()
+  "Start Forefox or switch to it, if it is already running"
+  (run-or-raise "firefox" '(:class "Firefox")))
 
-;; swank server
-(require :swank)
-(swank-loader:init)
-
-(defparameter *port-number* 4004
-  "My default port number for Swank")
-
-(defvar *swank-server-p* nil
-  "Keep track of swank server, turned off by default on startup")
-
-(defcommand start-swank () ()
-  "Start Swank if it is not already running"
-  (if *swank-server-p*
-      (message "Swank server is already active on Port^5 ~a^n" *port-number*)
-      (progn
-	(swank:create-server :port *port-number*
-			     :style swank:*communication-style*
-			     :dont-close t)
-	(setf *swank-server-p* t)
-	(message "Swank server is now active on Port^5 ~a^n.
-Use^4 M-x slime-connect^n in Emacs. 
-Type^2 (in-package :stumpwm)^n in Slime REPL." *port-number*))))
-
-(defcommand stop-swank () ()
-  "Stop Swank"
-  (swank:stop-server *port-number*)
-  (setf *swank-server-p* nil)
-  (message "Stopping Swank Server! Closing Port^5 ~a^n." *port-number*))
-
-(defcommand toggle-swank () ()
-  (if *swank-server-p*
-      (run-commands "stop-swank")
-      (run-commands "start-swank")))
-
-(define-key *top-map* (kbd "s-s") "toggle-swank")
+(define-key *root-map* (kbd "b") "firefox")
 
 ;; modeline status
 ;;(defun get-swank-status ()
