@@ -50,8 +50,8 @@
 	    ;;"%S"              ; swank status
 	    ;;"%B"              ; battery percentage
 	    "%C" ;cpu
-	    "%M" ;ram
-	    "%B" ;bat
+	    ;"%M" ;ram
+	    ;"%B" ;bat
             "%d"))            ; time/date
 
 
@@ -65,7 +65,7 @@
 (setf *input-window-gravity* :top-right)
 
 ;; font
-(set-font "Iosevka Nerd Font Mono")
+(set-font "Iosevka Nerd Font Mono:size=14")
 
 ;; wallpaper
 (run-shell-command "feh --bg-fill /home/ez/pic/8-bit/pixelart-night-darkfantasy.jpg")
