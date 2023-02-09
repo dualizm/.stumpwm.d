@@ -1,144 +1,132 @@
-;; author: ezqb
-;; file: stumpwm config
+;;;; author: ezqb
+;;;; file: stumpwm config
 
-;; quicklisp
+;;; load stumpwm	  
+(in-package :stumpwm)
+
+;;; bind prefix key		   
+(set-prefix-key (kbd "C-t"))	   
+
+;;; quicklisp
+(init-load-path #p"~/.stumpwm.d/modules/")
 (let ((quicklisp-init (merge-pathnames "quicklisp/setup.lisp"
 				       (user-homedir-pathname))))
   (when (probe-file quicklisp-init)
     (load quicklisp-init)))
 
-;; load stumpwm
-(in-package :stumpwm)
+;;; color theme
+(defparameter *color-white*	"#ffffff")
+(defparameter *color-orange*	"#e68910")
+(defparameter *color-magenta* "#d34474")
+(defparameter *color-purple*	"#1c1d36")
+(defparameter *color-gray*	"#161616")
+(defparameter *color-black*     "#0c0b16")
 
-;; bind prefix key
-(set-prefix-key (kbd "C-t"))
-
-;; color theme
-(setf *color-white* "#ffffff"
-      *color-orange* "#e68910"
-      *color-magenta* "#d34474"
-      *color-purple* "#1c1d36"
-      *color-gray* "#161616"
-      *color-black* "#0c0b16")
-
-;; groups
+;;; groups
 (when *initializing*
   (grename "www")
   (gnewbg  "dev")
-  (gnewbg  "tlg"))
+  (gnewbg  "d2v")
+  (gnewbg  "mus")
+  (gnewbg  "gam"))
 
-;; color theme
+;;; color theme
 (set-fg-color *color-orange*)
 (set-bg-color *color-purple*)
 (set-border-color *color-black*)
 (set-msg-border-width 2)
 
-;; mod-line config
-(setf *mode-line-timeout* 1)
-(setf *mode-line-border-width* 0)
-(setf *mode-line-background-color* *color-purple*)
-(setf *mode-line-border-color* *color-black*)
-(setf *mode-line-foreground-color* *color-orange*)
+;;; mod-line config
+(defparameter *mode-line-timeout*          1)
+(defparameter *mode-line-border-width*     0)
+(defparameter *mode-line-border-color*     *color-orange*)
+(defparameter *mode-line-background-color* *color-purple*)
+(defparameter *mode-line-foreground-color* *color-orange*)
 (mode-line)
 
 ;;(setf *time-modeline-string* *time-modeline-string-default*)
 
-(setf *screen-mode-line-format*
+(defparameter *screen-mode-line-format*
       (list "(%g) "       ; groups
-	    "%W"              ; windows
+	    "'(%W)"              ; windows
 	    "^>"              ; right align
 	    ;;"%S"              ; swank status
 	    ;;"%B"              ; battery percentage
-	    "%C" ;cpu
-	    ;"%M" ;ram
-	    ;"%B" ;bat
-            "%d"))            ; time/date
+	    ;;"%C" ;cpu
+	    ;;"%M" ;ram
+	    ;;"%B" ;bat
+            "(%d)"))            ; time/date
 
 
-;; winddows config
-(setf *window-format* "%m%n%s%20t")
-(setf *mouse-focus-policy* :click)
-(setf *message-window-padding* 20)
+;;; winddows config
+(defparameter *window-format* "%m%n:%20t")
+(defparameter *mouse-focus-policy* :click)
+(defparameter *message-window-padding* 20)
+(defparameter *timeout-wait 4)
+(defparameter *message-window-gravite :top-right)
+(defparameter *input-window-gravity* :top-right)
 (set-msg-border-width 2)
-(setf *timeout-wait 4)
-(setf *message-window-gravite :top-right)
-(setf *input-window-gravity* :top-right)
 
-;; font
-(set-font "Iosevka Nerd Font Mono:size=14")
+;;; font
+(ql:quickload 'truetype-clx)
+(require 'truetype-clx)
+(load-module "ttf-fonts")
+;;(set-font (list
+;;	   (make-instance 'xft:font
+;;			  :family "Iosevka Nerd Font Mono"
+;;			  :size 14
+;;			  :subfamily "Regular")))
 
-;; wallpaper
-(run-shell-command "feh --bg-fill /home/ez/pic/8-bit/pixelart-night-darkfantasy.jpg")
+(set-font "-fsdf-PragmataPro-normal-normal-normal-*-19-*-*-*-m-0-iso10646-1")
 
-;; keyboard
-(run-shell-command "setxkbmap -option ctrl:swapcasp")
-(run-shell-command "setxkbmap -layout us,ru -option grp:rctl_toggle")
+;;; wallpaper
+(run-shell-command "feh --bg-fill ~/pic/8-bit/pixelart-night-darkfantasy.jpg")
 
-;; standalone compositor
-(run-shell-command "picom")
+;;; standalone compositor    
+(run-shell-command "picom")  
 
-;; audio server
-;;(run-shell-command "pipewire")
-
-;; mouse hidde
-;;(run-shell-command "xsetroot -cursor_name left_ptr")
-
-;; set terminal
+;;; set terminal
 (define-key *root-map* (kbd "Return") "exec alacritty")
 (define-key *root-map* (kbd "c") "exec alacritty")
 (define-key *root-map* (kbd "C-c") "exec alacritty")
 
-;;(set-font (list
-;;	   (make-instance 'xft:font
-;;			  :family "Monoid"
-;;			  :subfamily "Bold"
-;;			  :size 13)
-;;	   (make-instance 'xft:font
-;;			  :family "Monoid"
-;;			  :subfamily "Regular"
-;;			  :size 12)))
-
 ;; slynk server
-;;(defcommand slynk (port) ((:string "Port number: "))
-;;  (sb-thread:make-thread
-;;   (lambda ()
-;;     (slynk:create-server :port (parse-integer port) :dont-close t))
-;;   :name "slynk-manual"))
+(ql:quickload :slynk)
+(defvar *slynk-port* (+ slynk::default-server-port 1))
+(defparameter *slynk-session* nil)
 
-;;(defparameter *slynk-port-number* 4004)
-;;(defvar *slynk-status-p* nil)
-;;
-;;(defcommand start-slynk () ()
-;;  (if *slynk-status-p*
-;;      (message "slynk server is already active on port ~a~%" *slynk-port-number*)
-;;      (progn
-;;	(slynk:create-server :port *slynk-port-number*
-;;			     :style slynk:*communication-style*
-;;			     :dont-close t)
-;;	(setf *slynk-status-p* t)
-;;	(message "slynk server run~%port: ~a~%" *port-number*))))
-;;
-;;(defcommand stop-slynk () ()
-;;  (slynk:stop-server *slynk-port-number*)
-;;  (setf *slynk-status-p* nil)
-;;  (message "stopping slynk!~%closing port: ~a~%" *slynk-port-number*))
+(defcommand slynk-start () ()
+  (defparameter *slynk-session*
+    (slynk:create-server
+     :port *slynk-port*
+     :dont-close t))
+  (message "slynk server start!~%port: ~a~%" *slynk-port*))
+  
+(defcommand slynk-restart () ()
+  (slynk-stop)
+  (slynk-start))
 
-;; application
+(defcommand slynk-stop () ()
+  (slynk:stop-server *slynk-port*)
+  (defparameter *slynk-session* nil)
+  (message "Stop slynk!~%closing port: ~a~%" *slynk-port*))
+
+(defcommand slynk-status () ()
+  (if *slynk-session*
+      (message "Slynk running on port: ~a~%" *slynk-port*)
+      (message "Slynk not running~%")))
+
+;;; application
 (defcommand firefox () ()
   "Start Forefox or switch to it, if it is already running"
   (run-or-raise "firefox" '(:class "Firefox")))
 
 (define-key *root-map* (kbd "b") "firefox")
 
-;; modeline status
-;;(defun get-swank-status ()
-;;  (if *swank-server-p*
-;;      (setf *swank-ml-status* (format nil "Swank ^3^f1^f0^n Port:^5 ~a^n " *port-number*))
-;;      (setf *swank-ml-status* "")))
-
-;;(defun ml-fmt-swank-status (ml)
-;;  (declare (ignore ml))
-;;  (get-swank-status))
+;;; keyboard
+(defparameter *caps-lock-behavior* :swapped)
+(run-shell-command "exec setxkbmap -layout us,ru -option grp:rctl_toggle")	 
+(run-shell-command "exec xsetroot -cursor_name left_ptr")			 
 
 ;;(add-screen-mode-line-formatter #\S #'ml-fmt-swank-status)
 
@@ -175,7 +163,7 @@
 ;;(set-font "-xos4-terminus-medium-r-normal--14-140-72-72-c-80-iso8859-15")
 ;;
 ;;;; Swap ctrl and caps
-;;(setf *caps-lock-behavior* :swapped)
+
 ;;
 ;;;;; Define window placement policy...
 ;;
