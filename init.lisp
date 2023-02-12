@@ -17,7 +17,7 @@
 ;;; color theme
 (defparameter *color-white*	"#ffffff")
 (defparameter *color-orange*	"#e68910")
-(defparameter *color-magenta* "#d34474")
+(defparameter *color-magenta*   "#d34474")
 (defparameter *color-purple*	"#1c1d36")
 (defparameter *color-gray*	"#161616")
 (defparameter *color-black*     "#0c0b16")
@@ -27,11 +27,11 @@
   (grename "www")
   (gnewbg  "dev")
   (gnewbg  "d2v")
-  (gnewbg  "mus")
+  (gnewbg  "spk")
   (gnewbg  "gam"))
 
 ;;; color theme
-(set-fg-color *color-orange*)
+(set-fg-color *color-magenta*)
 (set-bg-color *color-purple*)
 (set-border-color *color-black*)
 (set-msg-border-width 2)
@@ -39,9 +39,9 @@
 ;;; mod-line config
 (defparameter *mode-line-timeout*          1)
 (defparameter *mode-line-border-width*     0)
-(defparameter *mode-line-border-color*     *color-orange*)
+(defparameter *mode-line-border-color*     *color-black*)
 (defparameter *mode-line-background-color* *color-purple*)
-(defparameter *mode-line-foreground-color* *color-orange*)
+(defparameter *mode-line-foreground-color* *color-magenta*)
 (mode-line)
 
 ;;(setf *time-modeline-string* *time-modeline-string-default*)
@@ -68,27 +68,27 @@
 (set-msg-border-width 2)
 
 ;;; font
-(ql:quickload 'truetype-clx)
-(require 'truetype-clx)
-(load-module "ttf-fonts")
+;;(ql:quickload 'truetype-clx)
+;;(require 'truetype-clx)
+;;(load-module "ttf-fonts")
 ;;(set-font (list
 ;;	   (make-instance 'xft:font
 ;;			  :family "Iosevka Nerd Font Mono"
 ;;			  :size 14
 ;;			  :subfamily "Regular")))
 
-(set-font "-fsdf-PragmataPro-normal-normal-normal-*-19-*-*-*-m-0-iso10646-1")
+(set-font "-UKWN-VictorMono NFM-normal-normal-normal-*-15-*-*-*-m-0-iso10646-1")
 
 ;;; wallpaper
-(run-shell-command "feh --bg-fill ~/pic/8-bit/pixelart-night-darkfantasy.jpg")
+;;(run-shell-command "feh --bg-fill ~/pic/8-bit/pixelart-night-darkfantasy.jpg")
 
 ;;; standalone compositor    
-(run-shell-command "picom")  
+;;(run-shell-command "picom")  
 
 ;;; set terminal
-(define-key *root-map* (kbd "Return") "exec alacritty")
-(define-key *root-map* (kbd "c") "exec alacritty")
-(define-key *root-map* (kbd "C-c") "exec alacritty")
+;;(define-key *root-map* (kbd "Return") "exec alacritty")
+;;(define-key *root-map* (kbd "c") "exec alacritty")
+;;(define-key *root-map* (kbd "C-c") "exec alacritty")
 
 ;; slynk server
 (ql:quickload :slynk)
