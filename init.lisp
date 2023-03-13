@@ -1,5 +1,11 @@
-;;;; author: ezqb
-;;;; file: stumpwm config
+(defvar stumpwm-config-info
+  '((file	.	"init.lisp")
+    (authors	.	"cloezure")
+    (email	.	"ognieff@yandex.ru")
+    (url	.	"https://github.com/cloezure/.stumpwm.d")
+    (date-start .	"29-09-22")
+    (brief	.	"config for author"))
+  "Contain information about the config.")
 
 ;;; load stumpwm	  
 (in-package :stumpwm)
@@ -14,13 +20,19 @@
   (when (probe-file quicklisp-init)
     (load quicklisp-init)))
 
+(load "~/.stumpwm.d/back.lisp")
+
+(autostart-commands
+  ("nitrogen --restore" t)
+  ("picom" nil)
+  ("setxkbmap -layout us,ru -option grp:rctl_toggle -option ctrl:swapcaps" t)
+  ("xsetroot -cursor_name left_ptr" t))
+
 ;;; color theme
-(defparameter *color-white*	"#ffffff")
-(defparameter *color-orange*	"#e68910")
-(defparameter *color-magenta*   "#d34474")
-(defparameter *color-purple*	"#1c1d36")
-(defparameter *color-gray*	"#161616")
-(defparameter *color-black*     "#0c0b16")
+(defparameter *color-white*	"#fcfbf9")
+(defparameter *color-magenta*   "#83577d")
+(defparameter *color-blue*	"#cfd4df")
+(defparameter *color-black*     "#615f67")
 
 ;;; groups
 (when *initializing*
@@ -32,7 +44,7 @@
 
 ;;; color theme
 (set-fg-color *color-magenta*)
-(set-bg-color *color-purple*)
+(set-bg-color *color-white*)
 (set-border-color *color-black*)
 (set-msg-border-width 2)
 
@@ -40,7 +52,7 @@
 (defparameter *mode-line-timeout*          1)
 (defparameter *mode-line-border-width*     0)
 (defparameter *mode-line-border-color*     *color-black*)
-(defparameter *mode-line-background-color* *color-purple*)
+(defparameter *mode-line-background-color* *color-white*)
 (defparameter *mode-line-foreground-color* *color-magenta*)
 (mode-line)
 
@@ -77,19 +89,6 @@
 ;;			  :size 14
 ;;			  :subfamily "Regular")))
 
-(set-font "-UKWN-VictorMono NFM-normal-normal-normal-*-15-*-*-*-m-0-iso10646-1")
-
-;;; wallpaper
-;;(run-shell-command "feh --bg-fill ~/pic/8-bit/pixelart-night-darkfantasy.jpg")
-
-;;; standalone compositor    
-;;(run-shell-command "picom")  
-
-;;; set terminal
-;;(define-key *root-map* (kbd "Return") "exec alacritty")
-;;(define-key *root-map* (kbd "c") "exec alacritty")
-;;(define-key *root-map* (kbd "C-c") "exec alacritty")
-
 ;; slynk server
 (ql:quickload :slynk)
 (defvar *slynk-port* (+ slynk::default-server-port 1))
@@ -118,15 +117,41 @@
 
 ;;; application
 (defcommand firefox () ()
-  "Start Forefox or switch to it, if it is already running"
+  "Run new Firefox"
+  (message "Firefox starting!")
   (run-or-raise "firefox" '(:class "Firefox")))
 
 (define-key *root-map* (kbd "b") "firefox")
 
-;;; keyboard
-(defparameter *caps-lock-behavior* :swapped)
-(run-shell-command "exec setxkbmap -layout us,ru -option grp:rctl_toggle")	 
-(run-shell-command "exec xsetroot -cursor_name left_ptr")			 
+(defcommand terminal () ()
+  "Run new kitty"
+  (message "Kitty starting!")
+  (run-or-raise "kitty" '(:class "Kitty")))
+
+(defcommand screenshot-full () ()
+  (run-shell-command "maim ~/screenshots/$(date +\"%d_%I:%M:%S_%Y\")_screen.jpg"))
+
+(defcommand screenshot-rect () ()
+  (run-shell-command "maim -s ~/screenshots/$(date +\"%d_%I:%M:%S_%Y\")_screen.jpg"))
+
+(define-key *root-map* (kbd "c") "terminal")
+(define-key *root-map* (kbd "C-c") "terminal")
+
+;;; system
+(defcommand poweroff () ()
+  (run-shell-command "systemctl poweroff"))
+
+(defcommand reboot () ()
+  (run-shell-command "systemctl reboot"))
+
+(defcommand suspend () ()
+  (run-shell-command "systemctl suspend"))
+
+(defcommand hibernate () ()
+  (run-shell-command "systemctl hibernate"))
+
+(defcommand hibrid-sleep () ()
+  (run-shell-command "systemctl hibrid-sleep"))
 
 ;;(add-screen-mode-line-formatter #\S #'ml-fmt-swank-status)
 
