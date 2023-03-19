@@ -28,11 +28,15 @@
   ("setxkbmap -layout us,ru -option grp:rctl_toggle -option ctrl:swapcaps" t)
   ("xsetroot -cursor_name left_ptr" t))
 
-;;; color theme
+;;; color theme light
 (defparameter *color-white*	"#fcfbf9")
 (defparameter *color-magenta*   "#83577d")
 (defparameter *color-blue*	"#cfd4df")
 (defparameter *color-black*     "#615f67")
+
+;;; color theme dark
+(defparameter *color-background* "#181818")
+(defparameter *color-foreground* "#edf4f8")
 
 ;;; groups
 (when *initializing*
@@ -43,8 +47,8 @@
   (gnewbg  "gam"))
 
 ;;; color theme
-(set-fg-color *color-magenta*)
-(set-bg-color *color-white*)
+(set-fg-color *color-foreground*)
+(set-bg-color *color-background*)
 (set-border-color *color-black*)
 (set-msg-border-width 2)
 
@@ -52,8 +56,8 @@
 (defparameter *mode-line-timeout*          1)
 (defparameter *mode-line-border-width*     0)
 (defparameter *mode-line-border-color*     *color-black*)
-(defparameter *mode-line-background-color* *color-white*)
-(defparameter *mode-line-foreground-color* *color-magenta*)
+(defparameter *mode-line-background-color* *color-background*)
+(defparameter *mode-line-foreground-color* *color-foreground*)
 (mode-line)
 
 ;;(setf *time-modeline-string* *time-modeline-string-default*)
